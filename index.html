@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2eee5">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com https://tile.openstreetmap.org; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Czy pranie wyschnie?</title>
+  <link rel="stylesheet" href="./vendor/leaflet.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <p class="eyebrow">Pogoda dla świeżego prania</p>
+      <h1>Czy pranie<br><span>wyschnie?</span></h1>
+      <p class="lead">Sprawdzimy temperaturę, wilgotność, słońce, wiatr i deszcz — od wywieszenia aż do zachodu słońca.</p>
+    </header>
+
+    <section class="panel" aria-labelledby="location-title">
+      <div class="section-heading"><span>01</span><h2 id="location-title">Wybierz lokalizację</h2></div>
+      <p class="privacy-note">Lokalizacja służy tylko do pobrania prognozy. Nie zapisujemy dokładnych współrzędnych ani nie mamy własnego serwera.</p>
+      <div class="location-actions">
+        <button id="geolocate" class="primary" type="button">⌖ Użyj mojej lokalizacji</button>
+        <button id="manual-toggle" class="secondary" type="button" aria-expanded="false">Wybierz ręcznie</button>
+      </div>
+      <p id="location-status" class="status-line" aria-live="polite">Lokalizacja nie została jeszcze wybrana.</p>
+
+      <div id="manual-location" class="manual-location" hidden>
+        <form id="search-form" class="search-row">
+          <label class="field grow">Miejscowość lub kod pocztowy
+            <input id="place-query" type="search" minlength="3" autocomplete="postal-code" placeholder="np. Warszawa lub 00-001">
+          </label>
+          <button class="secondary search-button" type="submit">Szukaj</button>
+        </form>
+        <div id="search-results" class="search-results" aria-live="polite"></div>
+        <button id="map-toggle" class="text-button" type="button" aria-expanded="false">Albo wskaż punkt na mapie ↓</button>
+        <div id="map-wrap" hidden>
+          <p class="map-help">Kliknij lub dotknij mapy, aby ustawić pinezkę.</p>
+          <div id="map" role="application" aria-label="Mapa wyboru lokalizacji"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="laundry-title">
+      <div class="section-heading"><span>02</span><h2 id="laundry-title">Opisz pranie</h2></div>
+      <form id="checker-form">
+        <fieldset>
+          <legend>Rodzaj prania</legend>
+          <div class="cards-select">
+            <label><input type="radio" name="laundry" value="light"><span><strong>Lekkie</strong><small>Bielizna, koszulki, syntetyki</small></span></label>
+            <label><input type="radio" name="laundry" value="normal" checked><span><strong>Zwykłe</strong><small>Mieszany wsad, bawełna</small></span></label>
+            <label><input type="radio" name="laundry" value="heavy"><span><strong>Ciężkie</strong><small>Ręczniki, jeansy, bluzy</small></span></label>
+          </div>
+        </fieldset>
+        <label class="field ready-field">Kiedy będzie gotowe do wywieszenia?
+          <input id="ready-time" name="readyTime" type="datetime-local" step="900" required>
+        </label>
+        <p class="sunset-note">Termin końcowy ustalimy automatycznie: <strong>dzisiejszy zachód słońca</strong> w wybranej lokalizacji.</p>
+        <button id="check-button" class="primary wide" type="submit" disabled>Sprawdź, czy wyschnie <span>→</span></button>
+      </form>
+    </section>
+
+    <section id="result" class="result" aria-live="polite" hidden>
+      <div class="result-top"><p id="result-kicker" class="eyebrow">Wynik</p><span id="result-badge" class="result-badge"></span></div>
+      <h2 id="result-title"></h2>
+      <p id="result-summary" class="result-summary"></p>
+      <ul id="result-details" class="result-details"></ul>
+      <div id="weather-strip" class="weather-strip"></div>
+    </section>
+
+    <section class="panel compact" aria-labelledby="method-title">
+      <div class="section-heading"><span>03</span><h2 id="method-title">Jak liczymy?</h2></div>
+      <div class="method-grid">
+        <div><strong>☀ Słońce i temperatura</strong><p>Dostarczają energii potrzebnej do odparowania wody.</p></div>
+        <div><strong>≋ Wiatr</strong><p>Przyspiesza schnięcie. Ostrzegamy dopiero przy porywach powyżej 72 km/h.</p></div>
+        <div><strong>◌ Wilgotność</strong><p>Im bardziej wilgotne powietrze, tym wolniejsze schnięcie.</p></div>
+        <div><strong>☂ Opad</strong><p>Deszcz lub wysokie jego ryzyko przerywa bezpieczne okno.</p></div>
+      </div>
+      <p class="disclaimer">Wynik jest praktyczną wskazówką opartą na prognozie, nie gwarancją. Źródła: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open‑Meteo</a> i <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>.</p>
+    </section>
+  </main>
+  <script defer src="./app.js"></script>
+</body>
+</html>
